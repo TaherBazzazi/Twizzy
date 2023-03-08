@@ -76,7 +76,7 @@ public class TraitementImage {
 
 		//Methode qui permet d'extraire les contours d'une image donnee
 		public static List<MatOfPoint> ExtractContours(Mat input) {
-			// Detecter les contours des formes trouv es
+			// Detecter les contours des formes trouves
 			int thresh = 100;
 			Mat canny_output = new Mat();
 			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();

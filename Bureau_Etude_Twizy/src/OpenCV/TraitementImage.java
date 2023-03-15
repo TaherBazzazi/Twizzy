@@ -1,4 +1,5 @@
 package OpenCV;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -17,12 +18,18 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfDMatch;
 import org.opencv.core.MatOfInt4;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.features2d.DMatch;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FeatureDetector;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
@@ -69,7 +76,27 @@ public class TraitementImage {
 		}
 
 		public static Mat seuillage (Mat input, int seuilRougeOrange, int seuilRougeViolet,int seuilSaturation) {
-			return input;
+			Vector<Mat> channels = splitHSVChannels(input);
+			Scalar rougeviolet = new Scalar(seuilRougeViolet);
+			Scalar rougeorange = new Scalar(seuilRougeOrange);
+			Scalar seuilsaturation = new Scalar(seuilSaturation);
+
+			Mat rouges_orange=new Mat();
+			Mat rouges_violet=new Mat();
+			Mat rouges_sat=new Mat();
+			Mat Image_sortierouge=new Mat();
+			Mat Image_sortie=new Mat();
+
+			Core.compare(channels.get(0), rougeviolet, rouges_violet, Core.CMP_GT);
+			Core.compare(channels.get(0), rougeorange, rouges_orange, Core.CMP_LT);
+			Core.compare(channels.get(1), seuilsaturation, rouges_sat, Core.CMP_GT);
+			
+			Core.bitwise_or( rouges_violet, rouges_orange,Image_sortierouge);
+			Core.bitwise_and( Image_sortierouge, rouges_sat,Image_sortie);
+		
+
+
+			return Image_sortierouge;
 			
 			
 		}
@@ -94,7 +121,7 @@ public class TraitementImage {
 				Scalar color = new Scalar( rand.nextInt(255 - 0 + 1) , rand.nextInt(255 - 0 + 1),rand.nextInt(255 - 0 + 1) );
 				Imgproc.drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, new Point() );
 			}
-			//afficheImage("Contours",drawing);
+			afficheImage("Contours",drawing);
 
 			return contours;
 		}
@@ -104,27 +131,30 @@ public class TraitementImage {
 		//Renvoie une matrice carr e englobant un contour rond si un contour rond a  t  trouv 
 		public static Mat DetectForm(Mat img,MatOfPoint contour) {
 			MatOfPoint2f matOfPoint2f = new MatOfPoint2f();
-			MatOfPoint2f approxCurve = new MatOfPoint2f();
+			MatOfPoint2f approxCurve =new MatOfPoint2f();
 			float[] radius = new float[1];
 			Point center = new Point();
 			Rect rect = Imgproc.boundingRect(contour);
 			double contourArea = Imgproc.contourArea(contour);
-
+//probleme a resoudre : contourArea est tjrs nul du coup l objet rond est tjrs null 
 
 			matOfPoint2f.fromList(contour.toList());
 			// Cherche le plus petit cercle entourant le contour
 			Imgproc.minEnclosingCircle(matOfPoint2f, center, radius);
-			//System.out.println(contourArea+" "+Math.PI*radius[0]*radius[0]);
-			//on dit que c'est un cercle si l'aire occup  par le contour est   sup rieure    80% de l'aire occup e par un cercle parfait
+			System.out.println(contourArea+" "+Math.PI*radius[0]*radius[0]);
+			//on dit que c'est un cercle si l'aire occupe  par le contour est   superieure 80% de l'aire occupee par un cercle parfait
 			if ((contourArea / (Math.PI*radius[0]*radius[0])) >=0.8) {
-				//System.out.println("Cercle");
+				System.out.println("Cercle");
 				Core.circle(img, center, (int)radius[0], new Scalar(255, 0, 0), 2);
 				Core.rectangle(img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar (0, 255, 0), 2);
 				Mat tmp = img.submat(rect.y,rect.y+rect.height,rect.x,rect.x+rect.width);
 				Mat sign = Mat.zeros(tmp.size(),tmp.type());
 				tmp.copyTo(sign);
-				return sign;
-			}else {
+				afficheImage("sign",sign);
+				return sign ;
+			}
+			
+			else {
 
 				Imgproc.approxPolyDP(matOfPoint2f, approxCurve, Imgproc.arcLength(matOfPoint2f, true) * 0.02, true);
 				long total = approxCurve.total();
@@ -168,7 +198,6 @@ public class TraitementImage {
 				}			
 			}
 			return null;
-
 		}
 
 		
@@ -201,11 +230,38 @@ public class TraitementImage {
 			Core.normalize(grayObject, grayObject, 0, 255, Core.NORM_MINMAX);
 			//Imgproc.resize(grayObject, grayObject, graySign.size());	
 			
+			//Extraction des descripteurs et des keypoints
+			FeatureDetector orbDetector = FeatureDetector.create(FeatureDetector.ORB);
+			DescriptorExtractor orbExtractor = DescriptorExtractor.create(DescriptorExtractor.ORB);
+
+			MatOfKeyPoint objectKeypoints = new MatOfKeyPoint();
+			orbDetector.detect(grayObject, objectKeypoints);
+
+			MatOfKeyPoint signKeypoints = new MatOfKeyPoint();
+			orbDetector.detect(graySign, signKeypoints);
+
+			Mat objectDescriptor = new Mat(object.rows(),object.cols(), object.type());
+			orbExtractor.compute(grayObject, objectKeypoints, objectDescriptor);
+
+			Mat signDescriptor =  new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
+			orbExtractor.compute(graySign, signKeypoints, signDescriptor);
 			
+	//Faire le matching
+			MatOfDMatch matchs = new MatOfDMatch();
+			DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE);
+			matcher.match(objectDescriptor,signDescriptor,matchs);
 			
-			//  compl ter...
+			List<DMatch> l=matchs.toList();
+			double somme=0;
+			double moyenne=0;
 			
-			return -1;
+			for(int i=0;i<l.size();i++) {
+				DMatch dmatch =l.get(i);
+				somme=somme+dmatch.distance ; 
+			}
+			moyenne=somme/l.size();
+			
+			return moyenne;
 			
 			
 

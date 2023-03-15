@@ -11,32 +11,37 @@ public class MainTraitementImage {
 
 	public static void main(String[] args) {
 		//Ouverture le l'image et saturation des rouges
-				System.loadLibrary("opencv_java249");
-				Mat m=Highgui.imread("p10.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
+				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+				Mat m=Highgui.imread("res/images/p10.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
 				TraitementImage.afficheImage("Image testee", m);
 				Mat transformee=TraitementImage.transformeBGRversHSV(m);
 				
 				//la methode seuillage est ici extraite de l'archivage jar du meme nom 
 				Mat saturee=TraitementImage.seuillage(transformee, 6, 170, 110);
+				
+				TraitementImage.afficheImage("Image apres seuillage", saturee);
+				
 				Mat objetrond = null;
-
 				//Creation d'une liste des contours a partir de l'image saturee
 				List<MatOfPoint> ListeContours= TraitementImage .ExtractContours(saturee);
 				int i=0;
 				double [] scores=new double [6];
 				//Pour tous les contours de la liste
+				
 				for (MatOfPoint contour: ListeContours  ){
 					i++;
+					
 					objetrond=TraitementImage.DetectForm(m,contour);
+					//System.out.println(objetrond);
 
 					if (objetrond!=null){
 						TraitementImage.afficheImage("Objet rond detecte", objetrond);
-						scores[0]=TraitementImage.Similitude(objetrond,"ref30.jpg");
-						scores[1]=TraitementImage.Similitude(objetrond,"ref50.jpg");
-						scores[2]=TraitementImage.Similitude(objetrond,"ref70.jpg");
-						scores[3]=TraitementImage.Similitude(objetrond,"ref90.jpg");
-						scores[4]=TraitementImage.Similitude(objetrond,"ref110.jpg");
-						scores[5]=TraitementImage.Similitude(objetrond,"refdouble.jpg");
+						scores[0]=TraitementImage.Similitude(objetrond,"res/images/ref30.jpg");
+						scores[1]=TraitementImage.Similitude(objetrond,"res/images/ref50.jpg");
+						scores[2]=TraitementImage.Similitude(objetrond,"res/images/ref70.jpg");
+						scores[3]=TraitementImage.Similitude(objetrond,"res/images/ref90.jpg");
+						scores[4]=TraitementImage.Similitude(objetrond,"res/images/ref110.jpg");
+						scores[5]=TraitementImage.Similitude(objetrond,"res/images/refdouble.jpg");
 
 
 						//recherche de l'index du maximum et affichage du panneau detect 

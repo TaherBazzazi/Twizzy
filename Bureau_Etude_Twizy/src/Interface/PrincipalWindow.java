@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
@@ -160,6 +161,7 @@ public class PrincipalWindow extends JFrame {
 
 	private void btnHelpListener(ActionEvent e) {
 		System.out.println("btn About pressed");
+		JOptionPane.showMessageDialog(null,"Help Text Here","Help",JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void btnExitListener(ActionEvent e) {

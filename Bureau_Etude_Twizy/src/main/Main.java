@@ -4,9 +4,9 @@ import Interface.*;
 
 public class Main {
 
-public static Panel panel;
+public static LaunchWindow panel;
 	public static void main(String[] args) {
-		panel=new Panel();
+		panel=new LaunchWindow();
 		PrincipalWindow window=new PrincipalWindow();
 		
 	}

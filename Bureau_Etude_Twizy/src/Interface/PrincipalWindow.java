@@ -57,7 +57,7 @@ public class PrincipalWindow extends JFrame {
 		JButton btnHelp = new JButton(new ImageIcon(getClass().getResource("/icons/about.png")));
 		JButton btnExit = new JButton(new ImageIcon(getClass().getResource("/icons/exit.png")));
 
-		btnHome.addActionListener((e)->btnHomeListener(e));
+		btnHome.addActionListener((e) -> btnHomeListener(e));
 		btnNewImg.addActionListener((e) -> btnNewImgListener(e));
 		btnNewVid.addActionListener((e) -> btnNewVidListener(e));
 		btnHelp.addActionListener((e) -> btnHelpListener(e));
@@ -101,8 +101,8 @@ public class PrincipalWindow extends JFrame {
 		JMenuItem mnuNewVid = new JMenuItem("New Video...");
 		mnuNewVid.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
 		mnuNewVid.setIcon(new ImageIcon(getClass().getResource("/icons/newVideo.png")));
-		
-		JMenuItem mnuHome=new JMenuItem("Home");
+
+		JMenuItem mnuHome = new JMenuItem("Home");
 		mnuHome.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK));
 		mnuHome.setIcon(new ImageIcon(getClass().getResource("/icons/home.png")));
 
@@ -114,7 +114,7 @@ public class PrincipalWindow extends JFrame {
 		mnuE.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK));
 		mnuE.setIcon(new ImageIcon(getClass().getResource("/icons/Exit.png")));
 
-		mnuHome.addActionListener((e)->btnHomeListener(e));
+		mnuHome.addActionListener((e) -> btnHomeListener(e));
 		mnuNewImg.addActionListener((e) -> btnNewImgListener(e));
 		mnuNewVid.addActionListener((e) -> btnNewVidListener(e));
 		mnuH.addActionListener((e) -> btnHelpListener(e));
@@ -125,7 +125,7 @@ public class PrincipalWindow extends JFrame {
 		mnuFile.add(mnuNewVid);
 		mnuFile.addSeparator();
 		mnuFile.add(mnuHome);
-		
+
 		mnuHelp.add(mnuH);
 		mnuExit.add(mnuE);
 
@@ -135,9 +135,9 @@ public class PrincipalWindow extends JFrame {
 
 		return menuBar;
 	}
-	
+
 	private void btnHomeListener(ActionEvent e) {
-		LaunchWindow myLaunchWindow=new LaunchWindow();
+		LaunchWindow myLaunchWindow = new LaunchWindow();
 		myLaunchWindow.setVisible(true);
 		dispose();
 	}

@@ -15,13 +15,14 @@ public class MainTraitementImage {
 	static Path currentDirPath = Paths.get("");
 	public static String currentDir = currentDirPath.toAbsolutePath().toString().replace("\\", "/");
 
-	public static void main(String[] args) {
+	public static int img(String path) {
 
 		// Ouverture le l'image et saturation des rouges
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Mat m = Highgui.imread(currentDir + "/res/images/p10.jpg", Highgui.CV_LOAD_IMAGE_COLOR);
-
-		TraitementImage.afficheImage("Image teste", m);
+		//Mat m = Highgui.imread(currentDir + "/res/images/p10.jpg", Highgui.CV_LOAD_IMAGE_COLOR);
+		Mat m = Highgui.imread(path, Highgui.CV_LOAD_IMAGE_COLOR);
+		
+		//TraitementImage.afficheImage("Image teste", m);
 		Mat transformee = TraitementImage.transformeBGRversHSV(m);
 		// la methode seuillage est ici extraite de l'archivage jar du meme nom
 		Mat saturee = MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 110);
@@ -48,15 +49,21 @@ public class MainTraitementImage {
 				double scoremax = -1;
 				int indexmax = 0;
 				for (int j = 0; j < scores.length; j++) {
+					
 					if (scores[j] > scoremax) {
 						scoremax = scores[j];
 						indexmax = j;
+					
 					}
+				
 				}
+				
 				if (scoremax < 0) {
 					System.out.println("Aucun Panneau détecté");
-				} else {
-					switch (indexmax) {
+					return -1;
+				} else 
+					{return indexmax; }
+					/*switch (indexmax) {
 					case -1:
 						;
 						break;
@@ -81,13 +88,13 @@ public class MainTraitementImage {
 					case 6:
 						System.out.println("Panneau passage à niveau muni de barrières détecté");
 						break;
-
+*/
 					}
-				}
+				
 
 			}
 		
+		return -1;
 		}
-
+		
 	}
-}

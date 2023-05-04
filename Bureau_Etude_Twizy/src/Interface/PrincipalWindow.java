@@ -25,6 +25,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
+import OpenCV.MainTraitementImage;
+
 public class PrincipalWindow extends JFrame {
 
 	JButton btnLeft = new JButton();
@@ -33,6 +35,13 @@ public class PrincipalWindow extends JFrame {
 	ImageIcon roadImage;// =new ImageIcon(getClass().getResource("/res/images/p3.jpg"));
 	JLabel roadImageLabel = new JLabel();
 
+	private int found=1;
+	
+	JLabel img1 = new JLabel();
+	JLabel img2 = new JLabel();
+	JPanel leftComponent = new JPanel();
+	JLabel txt = new JLabel();
+	
 	public PrincipalWindow() {
 		super("Twizzy");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -152,6 +161,10 @@ public class PrincipalWindow extends JFrame {
 		if (response == JFileChooser.APPROVE_OPTION) {
 			roadImage = new ImageIcon(imgChooser.getSelectedFile().getAbsolutePath());
 			roadImageLabel.setIcon(roadImage);
+			
+			found=MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath());
+			System.out.print(found);
+			this.leftComponent();
 		}
 	}
 
@@ -202,36 +215,72 @@ public class PrincipalWindow extends JFrame {
 	}
 
 	private JPanel leftComponent() {
-		JPanel leftComponent = new JPanel();
-		JLabel img1 = new JLabel();
-		JLabel img2 = new JLabel();
-		JLabel txt = new JLabel();
+		
+		
+		
 
+		ImageIcon refdouble = new ImageIcon(getClass().getResource("/res/images/refdouble.jpg"));
+		ImageIcon ref30 = new ImageIcon(getClass().getResource("/res/images/ref30.jpg"));
+		ImageIcon ref50 = new ImageIcon(getClass().getResource("/res/images/ref50.jpg"));
+		ImageIcon ref70 = new ImageIcon(getClass().getResource("/res/images/ref70.jpg"));
 		ImageIcon ref110 = new ImageIcon(getClass().getResource("/res/images/ref110.jpg"));
 		ImageIcon ref90 = new ImageIcon(getClass().getResource("/res/images/ref90.jpg"));
 		leftComponent.setPreferredSize(new Dimension(254, 0));
 		leftComponent.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 30));
+		System.out.print(found);
+		
+		txt.setText("Panneau(x) Détecté(s):");
+		txt.setForeground(Color.black);
+		txt.setFont(new Font("BOLD", Font.PLAIN, 20));
 
-		img1.setIcon(ref110);
-		img2.setIcon(ref90);
+
+		switch(found) {
+		case 1:
+			img1.setIcon(ref50);
+
+			break;
+		case 2:
+			
+			img1.setIcon(ref70);
+
+			break;
+		case 3:
+			img1.setIcon(ref90);
+
+			break;
+		case 4:
+			img1.setIcon(ref110);
+
+			break;
+		case 5:
+			img1.setIcon(refdouble);
+
+			break;
+		case 0:
+			img1.setIcon(ref30);
+			break;
+		}
+		
 		txt.setText("Panneau(x) Détecté(s):");
 		txt.setForeground(Color.black);
 		txt.setFont(new Font("BOLD", Font.PLAIN, 20));
 
 		leftComponent.add(txt);
 		leftComponent.add(img1);
-		leftComponent.add(img2);
-		// leftComponent.setBackground(Color.red);
+		
+		//leftComponent.add(img2);
+		//leftComponent.setBackground(Color.red);
 		return leftComponent;
 	}
 
-	public static void main(String[] args) throws UnsupportedLookAndFeelException {
-		// apply a look
-		UIManager.setLookAndFeel(new NimbusLookAndFeel());
-		// start my window
-		PrincipalWindow myWindow = new PrincipalWindow();
-		myWindow.setVisible(true);
-
-	}
+	/*
+	 * public static void main() throws UnsupportedLookAndFeelException { 
+	 * // apply alook UIManager.setLookAndFeel(new NimbusLookAndFeel()); 
+	 * // start my window
+	 * PrincipalWindow myWindow = new PrincipalWindow(); 
+	 * myWindow.setVisible(true);
+	 * 
+	 * }
+	 */
 
 }

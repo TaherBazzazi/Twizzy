@@ -6,15 +6,11 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-<<<<<<< HEAD
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OpenCv"/>
-=======
 	<classpathentry kind="lib" path="C:/opencv/build/java/opencv-2413.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/opencv/build/java/x64"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/sabri/Desktop/ISN2/2A ISN 2022-2023/Semestre 2/Twizzy/Bureau_Etude_Twizy/Mabiblio.jar"/>
->>>>>>> sabri
 	<classpathentry kind="output" path="bin"/>
 </classpath>

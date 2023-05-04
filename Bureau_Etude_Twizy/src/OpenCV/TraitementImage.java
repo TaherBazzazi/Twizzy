@@ -136,99 +136,6 @@ public class TraitementImage {
 			return sign;
 		} else {
 
-<<<<<<< HEAD
-		}
-
-		//Methode qui permet de saturer les couleurs rouges à partir de 3 seuils
-		public static Mat seuillage(Mat input, int seuilRougeOrange, int seuilRougeViolet,int seuilSaturation){
-			Vector<Mat> channels = splitHSVChannels(input);
-			Scalar rougeviolet = new Scalar(seuilRougeViolet);
-			Scalar rougeorange = new Scalar(seuilRougeOrange);
-			Scalar seuilsaturation = new Scalar(seuilSaturation);
-
-			Mat rouges_orange=new Mat();
-			Mat rouges_violet=new Mat();
-			Mat rouges_sat=new Mat();
-			Mat Image_sortierouge=new Mat();
-			Mat Image_sortie=new Mat();
-
-			Core.compare(channels.get(0), rougeviolet, rouges_violet, Core.CMP_GT);
-			Core.compare(channels.get(0), rougeorange, rouges_orange, Core.CMP_LT);
-			Core.compare(channels.get(1), seuilsaturation, rouges_sat, Core.CMP_GT);
-			
-			Core.bitwise_or( rouges_violet, rouges_orange,Image_sortierouge);
-			Core.bitwise_and( Image_sortierouge, rouges_sat,Image_sortie);
-		
-
-
-			return Image_sortierouge;
-			
-		}
-		
-		//Methode qui permet d'extraire les contours d'une image donnee
-		public static List<MatOfPoint> ExtractContours(Mat input) {
-			// Detecter les contours des formes trouv es
-			int thresh = 100;
-			Mat canny_output = new Mat();
-			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-			MatOfInt4 hierarchy = new MatOfInt4();
-			Imgproc.Canny( input, canny_output, thresh, thresh*2);
-
-
-			/// Find extreme outer contours
-			Imgproc.findContours( canny_output, contours, hierarchy,Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-			Mat drawing = Mat.zeros( canny_output.size(), CvType.CV_8UC3 );
-			Random rand = new Random();
-			for( int i = 0; i< contours.size(); i++ )
-			{
-				Scalar color = new Scalar( rand.nextInt(255 - 0 + 1) , rand.nextInt(255 - 0 + 1),rand.nextInt(255 - 0 + 1) );
-				Imgproc.drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, new Point() );
-			}
-			afficheImage("Contours",drawing);
-
-			return contours;
-		}
-
-		//Methode qui permet de decouper et identifier les contours carres, triangulaires ou rectangulaires. 
-		//Renvoie null si aucun contour rond n'a  ete  trouv .	
-		//Renvoie une matrice carre englobant un contour rond si un contour rond a  ete  trouve 
-		public static Mat DetectForm(Mat img,MatOfPoint contour) {
-			MatOfPoint2f matOfPoint2f = new MatOfPoint2f();
-			MatOfPoint2f approxCurve = new MatOfPoint2f();
-			float[] radius = new float[1];
-			Point center = new Point();
-			Rect rect = Imgproc.boundingRect(contour);
-			double contourArea = Imgproc.contourArea(contour);
-
-
-			matOfPoint2f.fromList(contour.toList());
-			// Cherche le plus petit cercle entourant le contour
-			Imgproc.minEnclosingCircle(matOfPoint2f, center, radius);
-			System.out.println(contourArea+" "+Math.PI*radius[0]*radius[0]);
-			//on dit que c'est un cercle si l'aire occup  par le contour est   sup rieure    80% de l'aire occup e par un cercle parfait
-			if ((contourArea / (Math.PI*radius[0]*radius[0])) >=0.8) {
-				System.out.println("Cercle");
-				Core.circle(img, center, (int)radius[0], new Scalar(255, 0, 0), 2);
-				Core.rectangle(img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar (0, 255, 0), 2);
-				Mat tmp = img.submat(rect.y,rect.y+rect.height,rect.x,rect.x+rect.width);
-				Mat sign = Mat.zeros(tmp.size(),tmp.type());
-				tmp.copyTo(sign);
-				return sign;
-			}else {
-
-				Imgproc.approxPolyDP(matOfPoint2f, approxCurve, Imgproc.arcLength(matOfPoint2f, true) * 0.02, true);
-				long total = approxCurve.total();
-				if (total == 3 ) { // is triangle
-					//System.out.println("Triangle");
-					Point [] pt = approxCurve.toArray();
-					Core.line(img, pt[0], pt[1], new Scalar(255,0,0),2);
-					Core.line(img, pt[1], pt[2], new Scalar(255,0,0),2);
-					Core.line(img, pt[2], pt[0], new Scalar(255,0,0),2);
-					Core.rectangle(img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar (0, 255, 0), 2);
-					Mat tmp = img.submat(rect.y,rect.y+rect.height,rect.x,rect.x+rect.width);
-					Mat sign = Mat.zeros(tmp.size(),tmp.type());
-=======
 			Imgproc.approxPolyDP(matOfPoint2f, approxCurve, Imgproc.arcLength(matOfPoint2f, true) * 0.02, true);
 			long total = approxCurve.total();
 			if (total == 3) { // is triangle
@@ -264,7 +171,6 @@ public class TraitementImage {
 							new Scalar(0, 255, 0), 2);
 					Mat tmp = img.submat(rect.y, rect.y + rect.height, rect.x, rect.x + rect.width);
 					Mat sign = Mat.zeros(tmp.size(), tmp.type());
->>>>>>> sabri
 					tmp.copyTo(sign);
 					return null;
 				}
@@ -273,11 +179,6 @@ public class TraitementImage {
 					// drawText(rect.tl(), "Polygon");
 				}
 			}
-<<<<<<< HEAD
-			return null;
-
-=======
->>>>>>> sabri
 		}
 		return null;
 
@@ -292,14 +193,8 @@ public class TraitementImage {
 		return Math.floor(alpha * 180. / Math.PI + 0.5);
 	}
 
-<<<<<<< HEAD
-		
-		//methode   completer
-		public static double Similitude(Mat object,String signfile) {
-=======
 	// methode � completer
 	public static double Similitude(Mat object, String signfile) {
->>>>>>> sabri
 
 		// Conversion du signe de reference en niveaux de gris et normalisation
 		Mat panneauref = Highgui.imread(signfile);
@@ -317,26 +212,6 @@ public class TraitementImage {
 		Core.normalize(grayObject, grayObject, 0, 255, Core.NORM_MINMAX);
 		// Imgproc.resize(grayObject, grayObject, graySign.size());
 
-<<<<<<< HEAD
-			//Conversion du panneau extrait de l'image en gris et normalisation et redimensionnement   la taille du panneau de r ference
-			Mat grayObject = new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
-			Imgproc.resize(object, object, graySign.size());
-			//afficheImage("Panneau extrait de l'image",object);
-			Imgproc.cvtColor(object, grayObject, Imgproc.COLOR_BGRA2GRAY);
-			Core.normalize(grayObject, grayObject, 0, 255, Core.NORM_MINMAX);
-			//Imgproc.resize(grayObject, grayObject, graySign.size());	
-			
-			
-			
-			//  compl ter...
-			Mat sObject=new Mat();
-			Imgproc.resize(object,sObject,panneauref.size());
-			// Extraction des descripteurs et keypoints
-			FeatureDetector orbDetector = FeatureDetector.create(FeatureDetector.ORB);
-			DescriptorExtractor orbExtractor = DescriptorExtractor.create(DescriptorExtractor.ORB);
-			MatOfKeyPoint objectKeypoints = new MatOfKeyPoint();
-			orbDetector.detect(grayObject, objectKeypoints);
-=======
 		// � compl�ter...
 		Mat sObject = new Mat();
 		Imgproc.resize(object, sObject, panneauref.size());
@@ -348,38 +223,10 @@ public class TraitementImage {
 
 		MatOfKeyPoint signKeypoints = new MatOfKeyPoint();
 		orbDetector.detect(graySign, signKeypoints);
->>>>>>> sabri
 
 		Mat objectDescriptor = new Mat(object.rows(), object.cols(), object.type());
 		orbExtractor.compute(grayObject, objectKeypoints, objectDescriptor);
 
-<<<<<<< HEAD
-			Mat objectDescriptor = new Mat(object.rows(), object.cols(), object.type());
-			orbExtractor.compute(grayObject, objectKeypoints, objectDescriptor);
-
-			Mat signDescriptor = new Mat(panneauref.rows(), panneauref.cols(),panneauref.type());
-			orbExtractor.compute(graySign, signKeypoints, signDescriptor);
-
-			
-			MatOfDMatch matchs = new MatOfDMatch();
-			DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE) ;
-			matcher.match(objectDescriptor, signDescriptor, matchs);
-			System.out.println(matchs.dump());
-			
-			Mat matchedImage = new Mat(panneauref.rows(), panneauref.cols()*2,panneauref.type());
-			Features2d.drawMatches(sObject, objectKeypoints, panneauref, signKeypoints,matchs, matchedImage);
-
-			
-			
-
-			return matchs.rows();
-
-		}
-
-	}
-
-		
-=======
 		Mat signDescriptor = new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
 		orbExtractor.compute(graySign, signKeypoints, signDescriptor);
 
@@ -449,4 +296,3 @@ public class TraitementImage {
 	}
 
 }
->>>>>>> sabri

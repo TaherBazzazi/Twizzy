@@ -2,8 +2,10 @@ package OpenCV;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -13,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -26,12 +29,18 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+
 import org.opencv.features2d.DMatch;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.FeatureDetector;
+import org.opencv.features2d.Features2d;
 import org.opencv.highgui.Highgui;
+
 import org.opencv.imgproc.Imgproc;
+
+//import org.opencv.imgcodecs.Imgcodecs;
 
 public class TraitementImage {
 	//Contient toutes les methodes necessaires a la transformation des images
@@ -75,7 +84,8 @@ public class TraitementImage {
 
 		}
 
-		public static Mat seuillage (Mat input, int seuilRougeOrange, int seuilRougeViolet,int seuilSaturation) {
+		//Methode qui permet de saturer les couleurs rouges à partir de 3 seuils
+		public static Mat seuillage(Mat input, int seuilRougeOrange, int seuilRougeViolet,int seuilSaturation){
 			Vector<Mat> channels = splitHSVChannels(input);
 			Scalar rougeviolet = new Scalar(seuilRougeViolet);
 			Scalar rougeorange = new Scalar(seuilRougeOrange);
@@ -98,12 +108,11 @@ public class TraitementImage {
 
 			return Image_sortierouge;
 			
-			
 		}
-
+		
 		//Methode qui permet d'extraire les contours d'une image donnee
 		public static List<MatOfPoint> ExtractContours(Mat input) {
-			// Detecter les contours des formes trouves
+			// Detecter les contours des formes trouv es
 			int thresh = 100;
 			Mat canny_output = new Mat();
 			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -126,23 +135,23 @@ public class TraitementImage {
 			return contours;
 		}
 
-		//Methode qui permet de decouper et identifier les contours carr s, triangulaires ou rectangulaires. 
-		//Renvoie null si aucun contour rond n'a  t  trouv .	
-		//Renvoie une matrice carr e englobant un contour rond si un contour rond a  t  trouv 
+		//Methode qui permet de decouper et identifier les contours carres, triangulaires ou rectangulaires. 
+		//Renvoie null si aucun contour rond n'a  ete  trouv .	
+		//Renvoie une matrice carre englobant un contour rond si un contour rond a  ete  trouve 
 		public static Mat DetectForm(Mat img,MatOfPoint contour) {
 			MatOfPoint2f matOfPoint2f = new MatOfPoint2f();
-			MatOfPoint2f approxCurve =new MatOfPoint2f();
+			MatOfPoint2f approxCurve = new MatOfPoint2f();
 			float[] radius = new float[1];
 			Point center = new Point();
 			Rect rect = Imgproc.boundingRect(contour);
 			double contourArea = Imgproc.contourArea(contour);
-//probleme a resoudre : contourArea est tjrs nul du coup l objet rond est tjrs null 
+
 
 			matOfPoint2f.fromList(contour.toList());
 			// Cherche le plus petit cercle entourant le contour
 			Imgproc.minEnclosingCircle(matOfPoint2f, center, radius);
 			System.out.println(contourArea+" "+Math.PI*radius[0]*radius[0]);
-			//on dit que c'est un cercle si l'aire occupe  par le contour est   superieure 80% de l'aire occupee par un cercle parfait
+			//on dit que c'est un cercle si l'aire occup  par le contour est   sup rieure    80% de l'aire occup e par un cercle parfait
 			if ((contourArea / (Math.PI*radius[0]*radius[0])) >=0.8) {
 				System.out.println("Cercle");
 				Core.circle(img, center, (int)radius[0], new Scalar(255, 0, 0), 2);
@@ -150,11 +159,8 @@ public class TraitementImage {
 				Mat tmp = img.submat(rect.y,rect.y+rect.height,rect.x,rect.x+rect.width);
 				Mat sign = Mat.zeros(tmp.size(),tmp.type());
 				tmp.copyTo(sign);
-				afficheImage("sign",sign);
-				return sign ;
-			}
-			
-			else {
+				return sign;
+			}else {
 
 				Imgproc.approxPolyDP(matOfPoint2f, approxCurve, Imgproc.arcLength(matOfPoint2f, true) * 0.02, true);
 				long total = approxCurve.total();
@@ -198,6 +204,7 @@ public class TraitementImage {
 				}			
 			}
 			return null;
+
 		}
 
 		
@@ -211,6 +218,8 @@ public class TraitementImage {
 			return Math.floor(alpha * 180. / Math.PI + 0.5);
 		}
 
+		
+		//methode   completer
 		public static double Similitude(Mat object,String signfile) {
 
 			// Conversion du signe de reference en niveaux de gris et normalisation
@@ -230,42 +239,42 @@ public class TraitementImage {
 			Core.normalize(grayObject, grayObject, 0, 255, Core.NORM_MINMAX);
 			//Imgproc.resize(grayObject, grayObject, graySign.size());	
 			
-			//Extraction des descripteurs et des keypoints
+			
+			
+			//  compl ter...
+			Mat sObject=new Mat();
+			Imgproc.resize(object,sObject,panneauref.size());
+			// Extraction des descripteurs et keypoints
 			FeatureDetector orbDetector = FeatureDetector.create(FeatureDetector.ORB);
 			DescriptorExtractor orbExtractor = DescriptorExtractor.create(DescriptorExtractor.ORB);
-
 			MatOfKeyPoint objectKeypoints = new MatOfKeyPoint();
 			orbDetector.detect(grayObject, objectKeypoints);
 
 			MatOfKeyPoint signKeypoints = new MatOfKeyPoint();
 			orbDetector.detect(graySign, signKeypoints);
 
-			Mat objectDescriptor = new Mat(object.rows(),object.cols(), object.type());
+			Mat objectDescriptor = new Mat(object.rows(), object.cols(), object.type());
 			orbExtractor.compute(grayObject, objectKeypoints, objectDescriptor);
 
-			Mat signDescriptor =  new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
+			Mat signDescriptor = new Mat(panneauref.rows(), panneauref.cols(),panneauref.type());
 			orbExtractor.compute(graySign, signKeypoints, signDescriptor);
+
 			
-	//Faire le matching
 			MatOfDMatch matchs = new MatOfDMatch();
-			DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE);
-			matcher.match(objectDescriptor,signDescriptor,matchs);
+			DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE) ;
+			matcher.match(objectDescriptor, signDescriptor, matchs);
+			System.out.println(matchs.dump());
 			
-			List<DMatch> l=matchs.toList();
-			double somme=0;
-			double moyenne=0;
-			
-			for(int i=0;i<l.size();i++) {
-				DMatch dmatch =l.get(i);
-				somme=somme+dmatch.distance ; 
-			}
-			moyenne=somme/l.size();
-			
-			return moyenne;
+			Mat matchedImage = new Mat(panneauref.rows(), panneauref.cols()*2,panneauref.type());
+			Features2d.drawMatches(sObject, objectKeypoints, panneauref, signKeypoints,matchs, matchedImage);
+
 			
 			
 
+			return matchs.rows();
 
 		}
 
-}
+	}
+
+		

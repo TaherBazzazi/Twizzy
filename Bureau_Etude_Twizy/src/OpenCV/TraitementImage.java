@@ -2,8 +2,10 @@ package OpenCV;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -13,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -26,12 +29,18 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+
 import org.opencv.features2d.DMatch;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.FeatureDetector;
+import org.opencv.features2d.Features2d;
 import org.opencv.highgui.Highgui;
+
 import org.opencv.imgproc.Imgproc;
+
+//import org.opencv.imgcodecs.Imgcodecs;
 
 public class TraitementImage {
 	//Contient toutes les methodes necessaires a la transformation des images
@@ -75,27 +84,33 @@ public class TraitementImage {
 
 		}
 
+		//Methode qui permet de saturer les couleurs rouges à partir de 3 seuils
 		public static Mat seuillage (Mat input, int seuilRougeOrange, int seuilRougeViolet,int seuilSaturation) {
+			// Decomposition en 3 cannaux HSV
 			Vector<Mat> channels = splitHSVChannels(input);
+			
+			//création d'un seuil 
 			Scalar rougeviolet = new Scalar(seuilRougeViolet);
 			Scalar rougeorange = new Scalar(seuilRougeOrange);
 			Scalar seuilsaturation = new Scalar(seuilSaturation);
-
+			
+			//Création d'une matrice
 			Mat rouges_orange=new Mat();
 			Mat rouges_violet=new Mat();
 			Mat rouges_sat=new Mat();
 			Mat Image_sortierouge=new Mat();
 			Mat Image_sortie=new Mat();
-
+			
+			//Comparaison et saturation des pixels dont la composante rouge est plus grande que le seuil rougeViolet
 			Core.compare(channels.get(0), rougeviolet, rouges_violet, Core.CMP_GT);
 			Core.compare(channels.get(0), rougeorange, rouges_orange, Core.CMP_LT);
 			Core.compare(channels.get(1), seuilsaturation, rouges_sat, Core.CMP_GT);
 			
 			Core.bitwise_or( rouges_violet, rouges_orange,Image_sortierouge);
 			Core.bitwise_and( Image_sortierouge, rouges_sat,Image_sortie);
-		
-
-
+			
+			
+			//image saturée à retourner
 			return Image_sortierouge;
 			
 			
@@ -111,7 +126,7 @@ public class TraitementImage {
 			Imgproc.Canny( input, canny_output, thresh, thresh*2);
 
 
-			/// Find extreme outer contours
+			/// trouver le contour extreme
 			Imgproc.findContours( canny_output, contours, hierarchy,Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
 			Mat drawing = Mat.zeros( canny_output.size(), CvType.CV_8UC3 );
@@ -121,7 +136,7 @@ public class TraitementImage {
 				Scalar color = new Scalar( rand.nextInt(255 - 0 + 1) , rand.nextInt(255 - 0 + 1),rand.nextInt(255 - 0 + 1) );
 				Imgproc.drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, new Point() );
 			}
-			afficheImage("Contours",drawing);
+			// afficheImage("Contours",drawing);
 
 			return contours;
 		}
@@ -129,6 +144,7 @@ public class TraitementImage {
 		//Methode qui permet de decouper et identifier les contours carr s, triangulaires ou rectangulaires. 
 		//Renvoie null si aucun contour rond n'a  t  trouv .	
 		//Renvoie une matrice carr e englobant un contour rond si un contour rond a  t  trouv 
+		
 		public static Mat DetectForm(Mat img,MatOfPoint contour) {
 			MatOfPoint2f matOfPoint2f = new MatOfPoint2f();
 			MatOfPoint2f approxCurve =new MatOfPoint2f();
@@ -136,7 +152,7 @@ public class TraitementImage {
 			Point center = new Point();
 			Rect rect = Imgproc.boundingRect(contour);
 			double contourArea = Imgproc.contourArea(contour);
-//probleme a resoudre : contourArea est tjrs nul du coup l objet rond est tjrs null 
+         //probleme a resoudre : contourArea est tjrs nul du coup l objet rond est tjrs null 
 
 			matOfPoint2f.fromList(contour.toList());
 			// Cherche le plus petit cercle entourant le contour
@@ -145,8 +161,8 @@ public class TraitementImage {
 			//on dit que c'est un cercle si l'aire occupe  par le contour est   superieure 80% de l'aire occupee par un cercle parfait
 			if ((contourArea / (Math.PI*radius[0]*radius[0])) >=0.8) {
 				System.out.println("Cercle");
-				Core.circle(img, center, (int)radius[0], new Scalar(255, 0, 0), 2);
-				Core.rectangle(img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar (0, 255, 0), 2);
+				Core.circle(img, center, (int)radius[0], new Scalar(127, 0, 0), 2);
+				Core.rectangle(img, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar (0, 127, 0), 2);
 				Mat tmp = img.submat(rect.y,rect.y+rect.height,rect.x,rect.x+rect.width);
 				Mat sign = Mat.zeros(tmp.size(),tmp.type());
 				tmp.copyTo(sign);
@@ -158,7 +174,7 @@ public class TraitementImage {
 
 				Imgproc.approxPolyDP(matOfPoint2f, approxCurve, Imgproc.arcLength(matOfPoint2f, true) * 0.02, true);
 				long total = approxCurve.total();
-				if (total == 3 ) { // is triangle
+				if (total == 3 ) { // c est un triangle
 					//System.out.println("Triangle");
 					Point [] pt = approxCurve.toArray();
 					Core.line(img, pt[0], pt[1], new Scalar(255,0,0),2);
@@ -211,10 +227,96 @@ public class TraitementImage {
 			return Math.floor(alpha * 180. / Math.PI + 0.5);
 		}
 
+		
+		
+		public static Mat seuillageBW(Mat input, int seuilNoirBlanc){
+			//création d'un seuil 
+			Scalar noirblanc = new Scalar(seuilNoirBlanc);
+			//Création de l'image d'arrivée en noir et blanc
+			Mat noir_blanc=new Mat();
+			
+			
+			//Comparaison et saturation des pixels dont la luminosité est plus grande que le seuil noirblanc
+			Core.compare(input, noirblanc, noir_blanc, Core.CMP_GT);
+			
+			
+			
+			//image saturée à retourner
+			return  noir_blanc;
+
+
+
+		}
+		public static double SimilitudeBWratio(Mat object,String signfile) {
+			// Conversion du signe de reference en niveaux de gris et normalisation
+			Mat panneauref = Highgui.imread(signfile);	
+			float somme=0;
+			//int n=336;
+					
+			float moyenne=0;;
+			Mat graySign = new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
+			Imgproc.cvtColor(panneauref, graySign, Imgproc.COLOR_BGRA2GRAY);
+			Mat signeNoirEtBlanc=new Mat();
+					
+
+
+			//normalisation du panneau extrait de l'image et redimmensionnement à la taille du panneau de référence
+			Mat sObject=new Mat();
+			Imgproc.resize(object, sObject,panneauref.size() );
+			Core.normalize(sObject, sObject, 0, 255, Core.NORM_MINMAX);
+			Vector<Mat> channels = new Vector<Mat>(); 
+			
+			//Seuillage du panneau extrait pour supprimer la bordure rouge
+			Core.split(sObject, channels);
+			Mat tmp1 = channels.get(1);
+			channels.remove(1);
+			sObject=transformeBGRversHSV(sObject);
+			Mat tmp3= seuillage(sObject, 6, 170, 72);
+			
+			//suppression de toute l'image sauf la zone de texte et préparation aux seuillages de noirs et de blancs
+			Mat tmp4 = new Mat();
+			Imgproc.threshold(tmp3, tmp4, 90, 255, 0);
+			Core.bitwise_not(tmp4,tmp4);
+			Mat tmp5 = Mat.zeros(tmp4.size(),tmp4.type());
+			Core.circle(tmp5, new Point(tmp5.width()/2, tmp5.height()/2), (int)(tmp5.width()*(8.0/20.0)), new Scalar(255, 255, 255), -1);
+			Core.bitwise_and(tmp5,tmp4,tmp4);
+			Core.bitwise_not(tmp4,tmp5);
+			Imgproc.threshold(tmp5, tmp5, 127, 127, 0);
+			Core.bitwise_and(tmp4, tmp1, tmp1);
+			Core.add(tmp5, tmp1, tmp1);
+			
+			Mat grayObject=tmp1;
+			
+			//Comptage des pixels noirs et des pixels blancs et calcul des ratios
+			Vector<Mat> Blackandwhite = new Vector<Mat>();
+			Blackandwhite.add(seuillageBW(grayObject,125));
+			Blackandwhite.add(seuillageBW(grayObject,127));
+			double TotalNumberOfPixels = graySign.rows() * graySign.cols();
+			double nbblackref= (TotalNumberOfPixels-Core.countNonZero(seuillageBW(graySign,56)));
+			double nbwhiteref=Core.countNonZero(seuillageBW(graySign,170));
+			TotalNumberOfPixels = grayObject.rows() * grayObject.cols();
+			double nbblack= (TotalNumberOfPixels-Core.countNonZero(Blackandwhite.get(0)));
+			double nbwhite=Core.countNonZero(Blackandwhite.get(1));
+			double ratioref = nbblackref/nbwhiteref;
+			double ratio = nbblack/nbwhite;
+			
+			//Mat affiche = new Mat();
+			//Core.hconcat(Blackandwhite, affiche);
+			//afficheImage("détection pixels noirs vs pixels blancs du panneau", affiche);
+			
+			return Math.abs(ratioref-ratio);
+		}
+		
+		//methode à completer
 		public static double Similitude(Mat object,String signfile) {
+			
 
 			// Conversion du signe de reference en niveaux de gris et normalisation
-			Mat panneauref = Highgui.imread(signfile);
+			Mat panneauref = Highgui.imread(signfile);	
+			float somme=0;
+			//int n=336;
+			
+			float moyenne=0;;
 			Mat graySign = new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
 			Imgproc.cvtColor(panneauref, graySign, Imgproc.COLOR_BGRA2GRAY);
 			Core.normalize(graySign, graySign, 0, 255, Core.NORM_MINMAX);
@@ -222,7 +324,9 @@ public class TraitementImage {
 			
 
 
-			//Conversion du panneau extrait de l'image en gris et normalisation et redimensionnement   la taille du panneau de r ference
+			//Conversion du panneau extrait de l'image en gris et normalisation et redimensionnement à la taille du panneau de réference
+			Mat sObject=new Mat();
+			Imgproc.resize(object, sObject,panneauref.size() );
 			Mat grayObject = new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
 			Imgproc.resize(object, object, graySign.size());
 			//afficheImage("Panneau extrait de l'image",object);
@@ -230,42 +334,193 @@ public class TraitementImage {
 			Core.normalize(grayObject, grayObject, 0, 255, Core.NORM_MINMAX);
 			//Imgproc.resize(grayObject, grayObject, graySign.size());	
 			
-			//Extraction des descripteurs et des keypoints
-			FeatureDetector orbDetector = FeatureDetector.create(FeatureDetector.ORB);
-			DescriptorExtractor orbExtractor = DescriptorExtractor.create(DescriptorExtractor.ORB);
-
-			MatOfKeyPoint objectKeypoints = new MatOfKeyPoint();
-			orbDetector.detect(grayObject, objectKeypoints);
-
-			MatOfKeyPoint signKeypoints = new MatOfKeyPoint();
-			orbDetector.detect(graySign, signKeypoints);
-
-			Mat objectDescriptor = new Mat(object.rows(),object.cols(), object.type());
-			orbExtractor.compute(grayObject, objectKeypoints, objectDescriptor);
-
-			Mat signDescriptor =  new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
-			orbExtractor.compute(graySign, signKeypoints, signDescriptor);
 			
-	//Faire le matching
-			MatOfDMatch matchs = new MatOfDMatch();
-			DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE);
-			matcher.match(objectDescriptor,signDescriptor,matchs);
 			
-			List<DMatch> l=matchs.toList();
-			double somme=0;
-			double moyenne=0;
+			//à compléter...
+			FeatureDetector orbDetector =FeatureDetector.create(FeatureDetector.ORB);
+			DescriptorExtractor orbExtractor =DescriptorExtractor.create(DescriptorExtractor.ORB);
+			MatOfKeyPoint objectKeypoints =new MatOfKeyPoint();
+			orbDetector.detect(grayObject , objectKeypoints);
 			
-			for(int i=0;i<l.size();i++) {
-				DMatch dmatch =l.get(i);
-				somme=somme+dmatch.distance ; 
+			MatOfKeyPoint signKeypoints =new MatOfKeyPoint();
+			orbDetector.detect(graySign , signKeypoints);
+			
+			Mat objectDescriptor =new Mat (object.rows(),object.cols(),object.type());
+			orbExtractor.compute(grayObject, objectKeypoints,  objectDescriptor);
+			
+			Mat signDescriptor =new Mat (panneauref.rows(),panneauref.cols(),panneauref.type());
+			orbExtractor.compute(graySign, signKeypoints,  signDescriptor);
+			
+			//Matching
+			MatOfDMatch matchs =new MatOfDMatch();
+			DescriptorMatcher matcher =DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE);
+			matcher.match(objectDescriptor, signDescriptor,matchs);
+			//System.out.println(matchs.dump());
+			Mat matchedImage =new Mat(panneauref.rows(),panneauref.cols()*2,panneauref.type());
+			Features2d.drawMatches(sObject, objectKeypoints,panneauref,signKeypoints,matchs,matchedImage); 
+			//afficheImage("matched",matchedImage );
+			List<org.opencv.features2d.DMatch> l =matchs.toList();
+			
+			
+			for(int i=0;i<l.size();i++)
+			{  org.opencv.features2d.DMatch dmatch=l.get(i);
+			   somme=somme+dmatch.distance;
+			
+			
 			}
 			moyenne=somme/l.size();
-			
-			return moyenne;
-			
-			
-
-
+			//System.out.println(moyenne);
+			//System.out.println(contours.size());
+		
+			return moyenne;}
+		
+		public static BufferedImage Mat2bufferedImage(Mat image) {
+			MatOfByte bytemat = new MatOfByte();
+			Highgui.imencode(".jpg", image, bytemat);
+			byte[] bytes = bytemat.toArray();
+			InputStream in = new ByteArrayInputStream(bytes);
+			BufferedImage img = null;
+			try {
+				img = ImageIO.read(in);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return img;
 		}
 
-}
+
+		
+		public static int identifiepanneau(Mat objetrond, float ratioBWMatching){
+			double [] scores=new double [6];
+			double [] scoreso=new double [6];
+			int indexmax=-1;
+			
+			//Application de la méthode des ratios de noirs et de blancs et addition des scores avec la méthode de matching	
+			double scoremin=Integer.MAX_VALUE;
+			//System.out.println("scores Black and white + matching");
+			scores[0]=TraitementImage.SimilitudeBWratio(objetrond,"ref30bw.jpg")+TraitementImage.Similitude(objetrond,"ref30.jpg")/(200*ratioBWMatching);;
+			//System.out.println(scores[0]);
+			scores[1]=TraitementImage.SimilitudeBWratio(objetrond,"ref50bw.jpg")+TraitementImage.Similitude(objetrond,"ref50.jpg")/(200*ratioBWMatching);
+			//System.out.println(scores[1]);
+			scores[2]=TraitementImage.SimilitudeBWratio(objetrond,"ref70bw.jpg")+TraitementImage.Similitude(objetrond,"ref70.jpg")/(200*ratioBWMatching);
+			//System.out.println(scores[2]);
+			scores[3]=TraitementImage.SimilitudeBWratio(objetrond,"ref90bw.jpg")+TraitementImage.Similitude(objetrond,"ref90.jpg")/(200*ratioBWMatching);
+			//System.out.println(scores[3]);
+			scores[4]=TraitementImage.SimilitudeBWratio(objetrond,"ref110bw.jpg")+TraitementImage.Similitude(objetrond,"ref110.jpg")/(200*ratioBWMatching);
+			//System.out.println(scores[4]);
+			scores[5]=TraitementImage.SimilitudeBWratio(objetrond,"refdoublebw.jpg")+TraitementImage.Similitude(objetrond,"refdouble.jpg")/(200*ratioBWMatching);
+			//System.out.println(scores[5]);
+			
+		
+
+			for(int j=0;j<scores.length;j++){
+				if (scores[j]<scoremin){scoremin=scores[j];indexmax=j;
+				
+				}
+				//System.out.println("le score de la case"+j+"="+scores[j]+"\n");
+				}
+			//System.out.println(scoremin);
+			return indexmax;
+		}
+
+		public static  int identifiepanneau(Mat objetrond) {
+			float defaultratio = (float) 0.5;
+			return identifiepanneau(objetrond, defaultratio);
+		}
+		
+		public static ArrayList<String> etu_pan(String fichier) {
+			//Ouverture le l'image et saturation des rouges
+					System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+					Mat m=Highgui.imread(fichier);
+					//MaBibliothequeTraitementImageEtendue.afficheImage("Image testée", m);
+					Mat transformee=TraitementImage.transformeBGRversHSV(m);
+					//la methode seuillage est ici extraite de l'archivage jar du meme nom 
+					Mat saturee=TraitementImage.seuillage(transformee, 6, 170, 110);
+					Mat objetrond = null;
+
+					//Création d'une liste des contours à partir de l'image saturée
+					List<MatOfPoint> ListeContours= TraitementImage .ExtractContours(saturee);
+					int i=0;
+					int k=0;
+					double [] scores=new double [6];
+					//Pour tous les contours de la liste
+					ArrayList<String> panneaux = new ArrayList<String>();
+					
+					for (MatOfPoint contour: ListeContours  ){
+						i++;
+						objetrond=TraitementImage.DetectForm(m,contour);
+						
+						if (objetrond!=null){
+							
+							k++;
+							if (k==2)
+								TraitementImage.afficheImage("Objet rond detécté", objetrond);
+							scores[0]=TraitementImage.Similitude(objetrond,"ref30.jpg");
+							scores[1]=TraitementImage.Similitude(objetrond,"ref50.jpg");
+							scores[2]=TraitementImage.Similitude(objetrond,"ref70.jpg");
+							scores[3]=TraitementImage.Similitude(objetrond,"ref90.jpg");
+							scores[4]=TraitementImage.Similitude(objetrond,"ref110.jpg");
+							scores[5]=TraitementImage.Similitude(objetrond,"refdouble.jpg");
+							/*scores[6]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref10.jpg");
+							scores[7]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref20.jpg");
+							scores[8]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref40.jpg");
+							scores[9]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref80.jpg");
+							
+							scores[10]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref130.jpg");
+						*/	//recherche de l'index du maximum et affichage du panneau detecté
+							double scoremax=Integer.MAX_VALUE;
+							int indexmax=-1;
+							for(int j=0;j<scores.length;j++){
+								if (scores[j]<scoremax){scoremax=scores[j];indexmax=j;}}	
+							System.out.println(scoremax);
+							if(scoremax<0){System.out.println("Aucun Panneau détécté");}
+							else{switch(indexmax){
+							case -1:;break;
+							case 0:System.out.println("Panneau 30 détécté");
+						
+							panneaux.add("30");
+							break;
+							case 1:System.out.println("Panneau 50 détécté");
+							panneaux.add("50");
+							break;
+							case 2:System.out.println("Panneau 70 détécté");
+							panneaux.add("70");
+							break;
+							case 3:System.out.println("Panneau 90 détécté");
+							panneaux.add("90");
+							break;
+							case 4:System.out.println("Panneau 110 détécté");
+							panneaux.add("110");
+							break;
+							case 5:System.out.println("Panneau interdiction de dépasser détécté");
+							panneaux.add("intdep");
+							break;
+							/*case 6:System.out.println("Panneau 10 détécté");
+							panneaux.add("10");
+							break;
+							case 7:System.out.println("Panneau 20 détécté");
+							panneaux.add("20");
+							break;
+							case 8:System.out.println("Panneau 40 détécté");
+							panneaux.add("40");
+							break;
+							case 9:System.out.println("Panneau 80 détécté");
+							panneaux.add("80");
+							break;
+						
+							case 10:System.out.println("Panneau 130 détécté");
+							panneaux.add("130");
+							break;*/
+							}}
+							System.out.println("object rond n "+k+"\n");
+
+						}
+					}
+					
+
+			return panneaux;
+			}
+
+
+	}

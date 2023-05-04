@@ -12,7 +12,7 @@ public class MainTraitementImage {
 	public static void main(String[] args) {
 		//Ouverture le l'image et saturation des rouges
 				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-				Mat m=Highgui.imread("res/images/p10.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
+				Mat m=Highgui.imread("p1.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
 				TraitementImage.afficheImage("Image testee", m);
 				Mat transformee=TraitementImage.transformeBGRversHSV(m);
 				
@@ -24,6 +24,7 @@ public class MainTraitementImage {
 				Mat objetrond = null;
 				//Creation d'une liste des contours a partir de l'image saturee
 				List<MatOfPoint> ListeContours= TraitementImage .ExtractContours(saturee);
+				
 				int i=0;
 				double [] scores=new double [6];
 				//Pour tous les contours de la liste
@@ -32,7 +33,7 @@ public class MainTraitementImage {
 					i++;
 					
 					objetrond=TraitementImage.DetectForm(m,contour);
-					//System.out.println(objetrond);
+					System.out.println(objetrond);
 
 					if (objetrond!=null){
 						TraitementImage.afficheImage("Objet rond detecte", objetrond);

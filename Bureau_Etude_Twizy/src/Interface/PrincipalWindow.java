@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,22 +38,22 @@ import utilitaireAgreg.MaBibliothequeTraitementImage;
 public class PrincipalWindow extends JFrame {
 	static Path currentDirPath = Paths.get("");
 	public static String currentDir = currentDirPath.toAbsolutePath().toString().replace("\\", "/");
-	
+
 	JButton btnLeft = new JButton();
 	JButton btnRight = new JButton();
 
 	ImageIcon roadImage;// =new ImageIcon(getClass().getResource("/res/images/p3.jpg"));
 	JLabel roadImageLabel = new JLabel();
 
-	private int found = 1;
+	static List<Integer> found;
 
 	JLabel img1 = new JLabel();
 	JLabel img2 = new JLabel();
 	JPanel leftComponent = new JPanel();
 	JLabel txt = new JLabel();
 
-	
-	
+
+
 
 	public PrincipalWindow() {
 		super("Twizzy");
@@ -70,7 +71,7 @@ public class PrincipalWindow extends JFrame {
 		contentPane.add(leftComponent(), BorderLayout.WEST);
 		contentPane.add(rightComponent());
 		System.out.print(currentDir);
-		
+
 	}
 
 	private JToolBar createToolBar() {
@@ -169,18 +170,19 @@ public class PrincipalWindow extends JFrame {
 	private void btnNewImgListener(ActionEvent e) {
 		System.out.println("btn NewImg pressed");
 		JFileChooser imgChooser = new JFileChooser();
-		imgChooser.setCurrentDirectory(new File("./src/res/images"));
+		imgChooser.setCurrentDirectory(new File("/res/images"));
 
 		int response = imgChooser.showOpenDialog(null);
 		if (response == JFileChooser.APPROVE_OPTION) {
 			roadImage = new ImageIcon(imgChooser.getSelectedFile().getAbsolutePath());
 			roadImageLabel.setIcon(roadImage);
-			
-		
-			
+
+
+
 			// System.out.print(imgChooser.getSelectedFile().getAbsolutePath());
-			found = MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath());
-			System.out.print(found);
+
+			found=MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath());
+			System.out.print(MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath()));
 			this.leftComponent();
 		}
 
@@ -247,42 +249,108 @@ public class PrincipalWindow extends JFrame {
 		txt.setText("Panneau(x) Détecté(s):");
 		txt.setForeground(Color.black);
 		txt.setFont(new Font("BOLD", Font.PLAIN, 20));
+		if(found != null) {
+			if (found.size()==1) {
+				switch (found.get(0)) {
+				case 1:
+					img1.setIcon(ref50);
+					
+					break;
+				case 2:
 
-		switch (found) {
-		case 1:
-			img1.setIcon(ref50);
+					img1.setIcon(ref70);
+					
+					break;
+				case 3:
+					img1.setIcon(ref90);
+					
+					break;
+				case 4:
+					img1.setIcon(ref110);
+					
+					break;
+				case 5:
+					img1.setIcon(refdouble);
+					
+					break;
+				case 0:
+					img1.setIcon(ref30);
+					
+					break;
+				default:
+					break;
+				}
+				img2.setIcon(null);
+				
+				}
+			else if (found.size()>1) {
+				switch (found.get(0)) {
+				case 1:
+					img1.setIcon(ref50);
 
-			break;
-		case 2:
+					break;
+				case 2:
 
-			img1.setIcon(ref70);
+					img1.setIcon(ref70);
 
-			break;
-		case 3:
-			img1.setIcon(ref90);
+					break;
+				case 3:
+					img1.setIcon(ref90);
 
-			break;
-		case 4:
-			img1.setIcon(ref110);
+					break;
+				case 4:
+					img1.setIcon(ref110);
 
-			break;
-		case 5:
-			img1.setIcon(refdouble);
+					break;
+				case 5:
+					img1.setIcon(refdouble);
 
-			break;
-		case 0:
-			img1.setIcon(ref30);
-			break;
-		}
+					break;
+				case 0:
+					img1.setIcon(ref30);
+					break;
+				default:
+					break;
+				}	
+				switch ((int)found.get(1)) {
+				case 1:
+					img2.setIcon(ref50);
+
+					break;
+				case 2:
+
+					img2.setIcon(ref70);
+
+					break;
+				case 3:
+					img2.setIcon(ref90);
+
+					break;
+				case 4:
+					img2.setIcon(ref110);
+
+					break;
+				case 5:
+					img2.setIcon(refdouble);
+
+					break;
+				case 0:
+					img2.setIcon(ref30);
+					break;
+				default:
+					break;
+				}
+				
+				}}
 
 		txt.setText("Panneau(x) Détecté(s):");
 		txt.setForeground(Color.black);
 		txt.setFont(new Font("BOLD", Font.PLAIN, 20));
-
 		leftComponent.add(txt);
 		leftComponent.add(img1);
+		leftComponent.add(img2);
+		
 
-		// leftComponent.add(img2);
 		// leftComponent.setBackground(Color.red);
 		return leftComponent;
 	}

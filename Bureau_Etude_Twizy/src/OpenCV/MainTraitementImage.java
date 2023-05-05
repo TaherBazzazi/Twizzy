@@ -2,6 +2,7 @@ package OpenCV;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.core.Core;
@@ -14,6 +15,7 @@ import utilitaireAgreg.MaBibliothequeTraitementImage;
 public class MainTraitementImage {
 	static Path currentDirPath = Paths.get("");
 	public static String currentDir = currentDirPath.toAbsolutePath().toString().replace("\\", "/");
+	 static List<Integer> found;
 
 	public static int img(Mat m) {
 
@@ -81,13 +83,13 @@ public class MainTraitementImage {
 
 		return -1;
 	}
-	public static int img(String path) {
-
+	public static List<Integer> img(String path) {
+		
 		// Ouverture le l'image et saturation des rouges
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		//Mat m = Highgui.imread(currentDir + "/res/images/p10.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
 		Mat m = Highgui.imread(path, Highgui.CV_LOAD_IMAGE_COLOR);
-
+		found = new ArrayList();
 		// TraitementImage.afficheImage("Image teste", m);
 		Mat transformee = TraitementImage.transformeBGRversHSV(m);
 		// la methode seuillage est ici extraite de l'archivage jar du meme nom
@@ -126,9 +128,9 @@ public class MainTraitementImage {
 
 				if (scoremax < 0) {
 					System.out.println("Aucun Panneau détecté");
-					return -1;
+					return null;
 				} else {
-					return indexmax;
+					found.add(indexmax);
 				}
 				/*
 				 * switch (indexmax) { case -1: ; break; case 0:
@@ -145,7 +147,7 @@ public class MainTraitementImage {
 
 		}
 
-		return -1;
+		return found;
 	}
 
 }

@@ -19,17 +19,20 @@ import org.opencv.core.MatOfByte;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 
+import OpenCV.MainTraitementImage;
+
 public class test_video {
+	static int found;
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
-	static { 
-	    try {
-	    System.load("C:/Users/abgad/Downloads/opencv/build/x64/vc14/bin/opencv_ffmpeg2413_64.dll");
-	    } catch (UnsatisfiedLinkError e) {
-	        System.err.println("Native code library failed to load.\n" + e);
-	        System.exit(1);
-	    }
+	static {
+		try {
+			System.load("C:/Users/abgad/Downloads/opencv/build/x64/vc14/bin/opencv_ffmpeg2413_64.dll");
+		} catch (UnsatisfiedLinkError e) {
+			System.err.println("Native code library failed to load.\n" + e);
+			System.exit(1);
+		}
 	}
 	static Path currentDirPath = Paths.get("");
 	public static String currentDir = currentDirPath.toAbsolutePath().toString().replace("\\", "/");
@@ -37,8 +40,8 @@ public class test_video {
 	static Mat imag = null;
 
 	public static void main(String[] args) {
-		File f=new File("/src/res/Videos/video1.avi");
-		System.out.println(f.getAbsolutePath()	);
+		File f = new File("/src/res/Videos/video1.avi");
+		System.out.println(f.getAbsolutePath());
 		JFrame jframe = new JFrame("Display Video");
 		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JLabel vidpanel = new JLabel();
@@ -48,21 +51,20 @@ public class test_video {
 		jframe.setVisible(true);
 
 		Mat frame = new Mat();
-		VideoCapture camera = new VideoCapture(currentDir+"/res/Videos/video1.mp4");
-		
+		VideoCapture camera = new VideoCapture(currentDir + "/res/Videos/video1.mp4");
 
-		if(camera.isOpened()) {
-		while (camera.read(frame)) {
-			System.out.print(1);
-			ImageIcon image = new ImageIcon(Mat2bufferedImage(frame));
-			vidpanel.setIcon(image);
-			vidpanel.repaint();
-		}
-		}
-		else {
+		if (camera.isOpened()) {
+			while (camera.read(frame)) {
+				found = MainTraitementImage.img(frame);
+				System.out.print(found);
+				ImageIcon image = new ImageIcon(Mat2bufferedImage(frame));
+				vidpanel.setIcon(image);
+				vidpanel.repaint();
+			}
+		} else {
 			System.out.println("can t open file");
 		}
-		//camera.release();
+		// camera.release();
 	}
 
 	public static BufferedImage Mat2bufferedImage(Mat image) {

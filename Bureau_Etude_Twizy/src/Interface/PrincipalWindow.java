@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,23 +27,33 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.highgui.Highgui;
 import OpenCV.MainTraitementImage;
+import OpenCV.TraitementImage;
+import utilitaireAgreg.MaBibliothequeTraitementImage;
 
 public class PrincipalWindow extends JFrame {
-
+	static Path currentDirPath = Paths.get("");
+	public static String currentDir = currentDirPath.toAbsolutePath().toString().replace("\\", "/");
+	
 	JButton btnLeft = new JButton();
 	JButton btnRight = new JButton();
 
 	ImageIcon roadImage;// =new ImageIcon(getClass().getResource("/res/images/p3.jpg"));
 	JLabel roadImageLabel = new JLabel();
 
-	private int found=1;
-	
+	private int found = 1;
+
 	JLabel img1 = new JLabel();
 	JLabel img2 = new JLabel();
 	JPanel leftComponent = new JPanel();
 	JLabel txt = new JLabel();
+
 	
+	
+
 	public PrincipalWindow() {
 		super("Twizzy");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -57,6 +69,8 @@ public class PrincipalWindow extends JFrame {
 		contentPane.add(createToolBar(), BorderLayout.NORTH);
 		contentPane.add(leftComponent(), BorderLayout.WEST);
 		contentPane.add(rightComponent());
+		System.out.print(currentDir);
+		
 	}
 
 	private JToolBar createToolBar() {
@@ -162,10 +176,14 @@ public class PrincipalWindow extends JFrame {
 			roadImage = new ImageIcon(imgChooser.getSelectedFile().getAbsolutePath());
 			roadImageLabel.setIcon(roadImage);
 			
-			found=MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath());
+		
+			
+			// System.out.print(imgChooser.getSelectedFile().getAbsolutePath());
+			found = MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath());
 			System.out.print(found);
 			this.leftComponent();
 		}
+
 	}
 
 	private void btnNewVidListener(ActionEvent e) {
@@ -174,7 +192,7 @@ public class PrincipalWindow extends JFrame {
 
 	private void btnHelpListener(ActionEvent e) {
 		System.out.println("btn About pressed");
-		JOptionPane.showMessageDialog(null,"Help Text Here","Help",JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, "Help Text Here", "Help", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void btnExitListener(ActionEvent e) {
@@ -215,9 +233,6 @@ public class PrincipalWindow extends JFrame {
 	}
 
 	private JPanel leftComponent() {
-		
-		
-		
 
 		ImageIcon refdouble = new ImageIcon(getClass().getResource("/res/images/refdouble.jpg"));
 		ImageIcon ref30 = new ImageIcon(getClass().getResource("/res/images/ref30.jpg"));
@@ -228,19 +243,18 @@ public class PrincipalWindow extends JFrame {
 		leftComponent.setPreferredSize(new Dimension(254, 0));
 		leftComponent.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 30));
 		System.out.print(found);
-		
+
 		txt.setText("Panneau(x) Détecté(s):");
 		txt.setForeground(Color.black);
 		txt.setFont(new Font("BOLD", Font.PLAIN, 20));
 
-
-		switch(found) {
+		switch (found) {
 		case 1:
 			img1.setIcon(ref50);
 
 			break;
 		case 2:
-			
+
 			img1.setIcon(ref70);
 
 			break;
@@ -260,25 +274,23 @@ public class PrincipalWindow extends JFrame {
 			img1.setIcon(ref30);
 			break;
 		}
-		
+
 		txt.setText("Panneau(x) Détecté(s):");
 		txt.setForeground(Color.black);
 		txt.setFont(new Font("BOLD", Font.PLAIN, 20));
 
 		leftComponent.add(txt);
 		leftComponent.add(img1);
-		
-		//leftComponent.add(img2);
-		//leftComponent.setBackground(Color.red);
+
+		// leftComponent.add(img2);
+		// leftComponent.setBackground(Color.red);
 		return leftComponent;
 	}
 
 	/*
-	 * public static void main() throws UnsupportedLookAndFeelException { 
-	 * // apply alook UIManager.setLookAndFeel(new NimbusLookAndFeel()); 
-	 * // start my window
-	 * PrincipalWindow myWindow = new PrincipalWindow(); 
-	 * myWindow.setVisible(true);
+	 * public static void main() throws UnsupportedLookAndFeelException { // apply
+	 * alook UIManager.setLookAndFeel(new NimbusLookAndFeel()); // start my window
+	 * PrincipalWindow myWindow = new PrincipalWindow(); myWindow.setVisible(true);
 	 * 
 	 * }
 	 */

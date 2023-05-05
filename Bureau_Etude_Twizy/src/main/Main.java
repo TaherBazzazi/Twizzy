@@ -9,21 +9,18 @@ import OpenCV.MainTraitementImage;
 
 public class Main {
 
-
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
-		
-		
-		MainTraitementImage prog= new MainTraitementImage();
-		
-		
+
+		MainTraitementImage prog = new MainTraitementImage();
+
 		UIManager.setLookAndFeel(new NimbusLookAndFeel());
 		// start my window
 		LaunchWindow myLaunchWindow = new LaunchWindow();
 		myLaunchWindow.setVisible(true);
-		//MainTraitementImage.img();
-		//MainTraitementImage.img(myLaunchWindow.getTarget());
-		
+		// MainTraitementImage.img();
+		// MainTraitementImage.img(myLaunchWindow.getTarget());
+
 	}
 
 }

@@ -26,6 +26,7 @@ public class test_video {
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
+
 	static {
 		try {
 			System.load("C:/Users/abgad/Downloads/opencv/build/x64/vc14/bin/opencv_ffmpeg2413_64.dll");
@@ -33,6 +34,7 @@ public class test_video {
 			System.err.println("Native code library failed to load.\n" + e);
 			System.exit(1);
 		}
+
 	}
 	static Path currentDirPath = Paths.get("");
 	public static String currentDir = currentDirPath.toAbsolutePath().toString().replace("\\", "/");
@@ -51,7 +53,9 @@ public class test_video {
 		jframe.setVisible(true);
 
 		Mat frame = new Mat();
+
 		VideoCapture camera = new VideoCapture(currentDir + "/res/Videos/video1.mp4");
+
 
 		if (camera.isOpened()) {
 			while (camera.read(frame)) {

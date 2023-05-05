@@ -19,8 +19,10 @@ public class MainTraitementImage {
 
 		// Ouverture le l'image et saturation des rouges
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
 		//Mat m = Highgui.imread(currentDir + "/res/images/p10.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
 		// Mat m = Highgui.imread(path, Highgui.CV_LOAD_IMAGE_COLOR);
+
 
 		// TraitementImage.afficheImage("Image teste", m);
 		Mat transformee = TraitementImage.transformeBGRversHSV(m);
@@ -37,6 +39,7 @@ public class MainTraitementImage {
 			i++;
 			objetrond = MaBibliothequeTraitementImage.DetectForm(m, contour);
 			if (objetrond != null) {
+
 				// TraitementImage.afficheImage("Objet rond détecté", objetrond);
 				scores[0] = TraitementImage.Similitude(objetrond, currentDir + "/res/images/ref30.jpg");
 				scores[1] = TraitementImage.Similitude(objetrond, currentDir + "/res/images/ref50.jpg");
@@ -45,6 +48,8 @@ public class MainTraitementImage {
 				scores[4] = TraitementImage.Similitude(objetrond, currentDir + "/res/images/ref110.jpg");
 				scores[5] = TraitementImage.Similitude(objetrond, currentDir + "/res/images/refdouble.jpg");
 
+
+	
 				// recherche de l'index du maximum et affichage du panneau detect�
 				double scoremax = -1;
 				int indexmax = 0;
@@ -142,7 +147,6 @@ public class MainTraitementImage {
 				 * break; }
 				 */
 			}
-
 		}
 
 		return -1;

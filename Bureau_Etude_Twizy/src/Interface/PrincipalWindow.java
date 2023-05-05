@@ -161,7 +161,7 @@ public class PrincipalWindow extends JFrame {
 
 	private void btnHelpListener(ActionEvent e) {
 		System.out.println("btn About pressed");
-		JOptionPane.showMessageDialog(null,"Help Text Here","Help",JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, "Help Text Here", "Help", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void btnExitListener(ActionEvent e) {

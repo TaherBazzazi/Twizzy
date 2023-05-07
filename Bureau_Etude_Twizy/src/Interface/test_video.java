@@ -22,7 +22,13 @@ import org.opencv.highgui.VideoCapture;
 import OpenCV.MainTraitementImage;
 
 public class test_video {
+	static Mat frame;
+	static VideoCapture camera;
+	JLabel vidpanel;
+	static JFrame jframe ;
 	static int found;
+	ImageIcon image;
+	static MatOfByte bytemat;
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
@@ -38,37 +44,48 @@ public class test_video {
 	public static String currentDir = currentDirPath.toAbsolutePath().toString().replace("\\", "/");
 
 	static Mat imag = null;
-
-	public static void main(String[] args) {
-		File f = new File("/src/res/Videos/video1.avi");
-		System.out.println(f.getAbsolutePath());
-		JFrame jframe = new JFrame("Display Video");
+	public test_video() {
+		jframe = new JFrame("Display Video");
 		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JLabel vidpanel = new JLabel();
+		vidpanel = new JLabel();
 
 		jframe.setContentPane(vidpanel);
 		jframe.setSize(1920, 1080);
-		jframe.setVisible(true);
+		//jframe.setVisible(true);
 
-		Mat frame = new Mat();
-		VideoCapture camera = new VideoCapture(currentDir + "/res/Videos/video1.mp4");
-
-		if (camera.isOpened()) {
-			while (camera.read(frame)) {
-				found = MainTraitementImage.img(frame);
-				System.out.print(found);
-				ImageIcon image = new ImageIcon(Mat2bufferedImage(frame));
-				vidpanel.setIcon(image);
-				vidpanel.repaint();
-			}
-		} else {
-			System.out.println("can t open file");
-		}
-		// camera.release();
+		frame = new Mat();
+		camera = new VideoCapture(currentDir + "/res/Videos/video1.mp4");
+		//ImageIcon image;
+		bytemat = new MatOfByte();
 	}
+	
+	/*
+	 * public void video() {
+	 * 
+	 * File f = new File("/src/res/Videos/video1.avi");
+	 * System.out.println(f.getAbsolutePath()); JFrame jframe = new
+	 * JFrame("Display Video");
+	 * jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); JLabel vidpanel = new
+	 * JLabel();
+	 * 
+	 * jframe.setContentPane(vidpanel); jframe.setSize(1920, 1080);
+	 * jframe.setVisible(true);
+	 * 
+	 * Mat frame = new Mat(); VideoCapture camera = new VideoCapture(currentDir +
+	 * "/res/Videos/video2.avi");
+	 * 
+	 * 
+	 * if (camera.isOpened()) { while (camera.read(frame)) { found =
+	 * MainTraitementImage.img(frame); System.out.print(found);
+	 * 
+	 * image = new ImageIcon(Mat2bufferedImage(frame)); vidpanel.setIcon(image);
+	 * vidpanel.repaint(); }
+	 * 
+	 * } else { System.out.println("can t open file"); } // camera.release(); }
+	 */
 
 	public static BufferedImage Mat2bufferedImage(Mat image) {
-		MatOfByte bytemat = new MatOfByte();
+		//MatOfByte bytemat = new MatOfByte();
 		Highgui.imencode(".jpg", image, bytemat);
 		byte[] bytes = bytemat.toArray();
 		InputStream in = new ByteArrayInputStream(bytes);

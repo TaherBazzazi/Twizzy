@@ -17,13 +17,13 @@ public class MainTraitementImage {
 	public static String currentDir = currentDirPath.toAbsolutePath().toString().replace("\\", "/");
 	 static List<Integer> found;
 
-	public static int img(Mat m) {
+	public static List<Integer> img(Mat m) {
 
 		// Ouverture le l'image et saturation des rouges
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		//Mat m = Highgui.imread(currentDir + "/res/images/p10.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
 		// Mat m = Highgui.imread(path, Highgui.CV_LOAD_IMAGE_COLOR);
-
+		found = new ArrayList();
 		// TraitementImage.afficheImage("Image teste", m);
 		Mat transformee = TraitementImage.transformeBGRversHSV(m);
 		// la methode seuillage est ici extraite de l'archivage jar du meme nom
@@ -62,9 +62,9 @@ public class MainTraitementImage {
 
 				if (scoremax < 0) {
 					System.out.println("Aucun Panneau détecté");
-					return -1;
+					return null;
 				} else {
-					return indexmax;
+					found.add(indexmax);
 				}
 				/*
 				 * switch (indexmax) { case -1: ; break; case 0:
@@ -81,7 +81,7 @@ public class MainTraitementImage {
 
 		}
 
-		return -1;
+		return found;
 	}
 	public static List<Integer> img(String path) {
 		
@@ -121,9 +121,7 @@ public class MainTraitementImage {
 					if (scores[j] > scoremax) {
 						scoremax = scores[j];
 						indexmax = j;
-
 					}
-
 				}
 
 				if (scoremax < 0) {

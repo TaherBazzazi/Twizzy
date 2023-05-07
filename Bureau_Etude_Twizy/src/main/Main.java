@@ -20,7 +20,10 @@ public class Main {
 		myLaunchWindow.setVisible(true);
 		// MainTraitementImage.img();
 		// MainTraitementImage.img(myLaunchWindow.getTarget());
-
+		
+		//test_video t=new test_video();
+		//t.video();
+		
 	}
 
 }

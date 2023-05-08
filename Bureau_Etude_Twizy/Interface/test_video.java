@@ -34,7 +34,7 @@ public class test_video {
 	}
 	static {
 		try {
-			System.load("C:/Users/abgad/Downloads/opencv/build/x64/vc14/bin/opencv_ffmpeg2413_64.dll");
+			System.load("C:/opencv/build/x64/vc14/bin/opencv_ffmpeg2413_64.dll");
 		} catch (UnsatisfiedLinkError e) {
 			System.err.println("Native code library failed to load.\n" + e);
 			System.exit(1);

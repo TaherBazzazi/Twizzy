@@ -1,4 +1,4 @@
-package res.images;
+package main;
 import static org.junit.Assert.*;
 
 import java.nio.file.Path;

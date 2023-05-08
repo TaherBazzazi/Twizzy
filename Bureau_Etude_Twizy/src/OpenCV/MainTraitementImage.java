@@ -66,17 +66,6 @@ public class MainTraitementImage {
 				} else {
 					found.add(indexmax);
 				}
-				/*
-				 * switch (indexmax) { case -1: ; break; case 0:
-				 * System.out.println("Panneau 30 détecté"); break; case 1:
-				 * System.out.println("Panneau 50 détecté"); break; case 2:
-				 * System.out.println("Panneau 70 détecté"); break; case 3:
-				 * System.out.println("Panneau 90 détecté"); break; case 4:
-				 * System.out.println("Panneau 110 détecté"); break; case 5:
-				 * System.out.println("Panneau interdiction de dépasser détecté"); break; case
-				 * 6: System.out.println("Panneau passage à niveau muni de barrières détecté");
-				 * break; }
-				 */
 			}
 
 		}
@@ -130,17 +119,6 @@ public class MainTraitementImage {
 				} else {
 					found.add(indexmax);
 				}
-				/*
-				 * switch (indexmax) { case -1: ; break; case 0:
-				 * System.out.println("Panneau 30 détecté"); break; case 1:
-				 * System.out.println("Panneau 50 détecté"); break; case 2:
-				 * System.out.println("Panneau 70 détecté"); break; case 3:
-				 * System.out.println("Panneau 90 détecté"); break; case 4:
-				 * System.out.println("Panneau 110 détecté"); break; case 5:
-				 * System.out.println("Panneau interdiction de dépasser détecté"); break; case
-				 * 6: System.out.println("Panneau passage à niveau muni de barrières détecté");
-				 * break; }
-				 */
 			}
 
 		}

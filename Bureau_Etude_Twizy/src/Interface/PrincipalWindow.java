@@ -61,8 +61,8 @@ public class PrincipalWindow extends JFrame {
 	test_video t=new test_video();
 	VideoCapture camera ;
 	ImageIcon image;
-	
-	
+
+
 	Mat frame;
 	public PrincipalWindow() {
 		super("Twizzy");
@@ -151,7 +151,7 @@ public class PrincipalWindow extends JFrame {
 		mnuE.setIcon(new ImageIcon(getClass().getResource("/icons/Exit.png")));
 
 		mnuHome.addActionListener((e) -> btnHomeListener(e));
-		
+
 		mnuNewImg.addActionListener((e) -> btnNewImgListener(e));
 		mnuNewVid.addActionListener((e) -> btnNewVidListener(e));
 		mnuH.addActionListener((e) -> btnHelpListener(e));
@@ -192,44 +192,34 @@ public class PrincipalWindow extends JFrame {
 			Image resizedImage = img.getScaledInstance(1000, 700, Image.SCALE_SMOOTH);
 			ImageIcon resizedIcon = new ImageIcon(resizedImage);
 			roadImageLabel.setIcon(resizedIcon);
-			
+
+
 			found=MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath());
 			System.out.print(MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath()));
-		this.leftComponent();
-		
 		}	
 	}
-	
+
 	private void showvideo(String s) {
 
 		frame = new Mat(); 
 		camera = new VideoCapture(s);
-
+		img1.setIcon(null);
+		img2.setIcon(null);
 		if (camera.isOpened()) {
 			while (camera.read(frame)) {
 				found=found2;
 				found2=found3;
 				found3= MainTraitementImage.img(frame);
-				
 				System.out.print(found);
-				//image = new ImageIcon(test_video.Mat2bufferedImage(frame));					
-				//roadImageLabel.setIcon(image);
 				roadImage = new ImageIcon(test_video.Mat2bufferedImage(frame));
 				roadImageLabel.setIcon(roadImage);
-				//Thread.sleep(2000);
-				//camera.release();
-				if( (found!=null) && (found.equals(found2)) && (found.equals(found3)))
-				leftComponent();
-				
-				
-			}
-			
 
+				if( (found!=null) && (found.equals(found2)) && (found.equals(found3)))
+					leftComponent();
+			}
 		} else {
 			System.out.println("can t open file");
 		}
-		
-	
 	}
 
 	
@@ -247,12 +237,11 @@ public class PrincipalWindow extends JFrame {
 					leftComponent();
 					return null;
 				}
-				
 			};
-		 worker.execute();
-		 this.leftComponent();
+			worker.execute();
+			this.leftComponent();
+		}
 	}
-}
 
 	private void btnHelpListener(ActionEvent e) {
 		System.out.println("btn About pressed");
@@ -297,7 +286,7 @@ public class PrincipalWindow extends JFrame {
 	}
 
 	private JPanel leftComponent() {
-
+		
 		ImageIcon refdouble = new ImageIcon(getClass().getResource("/res/images/refdouble.jpg"));
 		ImageIcon ref30 = new ImageIcon(getClass().getResource("/res/images/ref30.jpg"));
 		ImageIcon ref50 = new ImageIcon(getClass().getResource("/res/images/ref50.jpg"));
@@ -307,7 +296,7 @@ public class PrincipalWindow extends JFrame {
 		leftComponent.setPreferredSize(new Dimension(254, 0));
 		leftComponent.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 30));
 		System.out.print(found);
-
+		
 		txt.setText("Panneau(x) Détecté(s):");
 		txt.setForeground(Color.black);
 		txt.setFont(new Font("BOLD", Font.PLAIN, 20));
@@ -415,8 +404,6 @@ public class PrincipalWindow extends JFrame {
 		leftComponent.add(img1);
 		leftComponent.add(img2);
 
-
-		// leftComponent.setBackground(Color.red);
 		return leftComponent;
 	}
 

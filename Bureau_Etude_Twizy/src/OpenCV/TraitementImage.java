@@ -174,10 +174,7 @@ public class TraitementImage {
 					tmp.copyTo(sign);
 					return null;
 				}
-				if (isPolygon) {
-					// System.out.println("Polygon");
-					// drawText(rect.tl(), "Polygon");
-				}
+				
 			}
 		}
 		return null;

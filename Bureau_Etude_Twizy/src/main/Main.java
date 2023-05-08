@@ -9,7 +9,6 @@ import OpenCV.MainTraitementImage;
 
 public class Main {
 
-	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
 
 		MainTraitementImage prog = new MainTraitementImage();
@@ -18,12 +17,6 @@ public class Main {
 		// start my window
 		LaunchWindow myLaunchWindow = new LaunchWindow();
 		myLaunchWindow.setVisible(true);
-		// MainTraitementImage.img();
-		// MainTraitementImage.img(myLaunchWindow.getTarget());
-		
-		//test_video t=new test_video();
-		//t.video();
-		
 	}
 
 }

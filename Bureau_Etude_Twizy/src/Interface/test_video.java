@@ -62,31 +62,6 @@ public class test_video {
 		bytemat = new MatOfByte();
 
 	}
-	
-	/*
-	 * public void video() {
-	 * 
-	 * File f = new File("/src/res/Videos/video1.avi");
-	 * System.out.println(f.getAbsolutePath()); JFrame jframe = new
-	 * JFrame("Display Video");
-	 * jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); JLabel vidpanel = new
-	 * JLabel();
-	 * 
-	 * jframe.setContentPane(vidpanel); jframe.setSize(1920, 1080);
-	 * jframe.setVisible(true);
-	 * 
-	 * Mat frame = new Mat(); VideoCapture camera = new VideoCapture(currentDir +
-	 * "/res/Videos/video2.avi");
-	 * 
-	 * 
-	 * if (camera.isOpened()) { while (camera.read(frame)) { found =
-	 * MainTraitementImage.img(frame); System.out.print(found);
-	 * 
-	 * image = new ImageIcon(Mat2bufferedImage(frame)); vidpanel.setIcon(image);
-	 * vidpanel.repaint(); }
-	 * 
-	 * } else { System.out.println("can t open file"); } // camera.release(); }
-	 */
 
 	public static BufferedImage Mat2bufferedImage(Mat image) {
 		//MatOfByte bytemat = new MatOfByte();
@@ -102,29 +77,5 @@ public class test_video {
 		return img;
 	}
 
-	/*
-	 * public static int identifiepanneau(Mat objetrond){ double [] scores=new
-	 * double [6]; int indexmax=-1; if (objetrond!=null){
-	 * scores[0]=MaBibliothequeTraitementImage.tauxDeSimilitude(objetrond,
-	 * "ref30.jpg");
-	 * scores[1]=MaBibliothequeTraitementImage.tauxDeSimilitude(objetrond,
-	 * "ref50.jpg");
-	 * scores[2]=MaBibliothequeTraitementImage.tauxDeSimilitude(objetrond,
-	 * "ref70.jpg");
-	 * scores[3]=MaBibliothequeTraitementImage.tauxDeSimilitude(objetrond,
-	 * "ref90.jpg");
-	 * scores[4]=MaBibliothequeTraitementImage.tauxDeSimilitude(objetrond,
-	 * "ref110.jpg");
-	 * scores[5]=MaBibliothequeTraitementImage.tauxDeSimilitude(objetrond,
-	 * "refdouble.jpg");
-	 * 
-	 * double scoremax=scores[0];
-	 * 
-	 * for(int j=1;j<scores.length;j++){ if
-	 * (scores[j]>scoremax){scoremax=scores[j];indexmax=j;}}
-	 * 
-	 * 
-	 * } return indexmax; }
-	 */
 
 }

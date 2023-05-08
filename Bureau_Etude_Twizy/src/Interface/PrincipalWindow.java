@@ -182,7 +182,7 @@ public class PrincipalWindow extends JFrame {
 	private void btnNewImgListener(ActionEvent e) {
 		System.out.println("btn NewImg pressed");
 		JFileChooser imgChooser = new JFileChooser();
-		this.leftComponent();
+		
 		imgChooser.setCurrentDirectory(new File("/res/images"));
 		int response = imgChooser.showOpenDialog(null);
 		if (response == JFileChooser.APPROVE_OPTION) {
@@ -196,6 +196,7 @@ public class PrincipalWindow extends JFrame {
 
 			found=MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath());
 			System.out.print(MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath()));
+			this.leftComponent();
 		}	
 	}
 

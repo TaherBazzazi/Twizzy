@@ -242,7 +242,7 @@ public class TraitementImage {
 		List<DMatch> listOfMatches = matchs.toList();
 		List<DMatch> goodMatches = new ArrayList<>();
 		for (DMatch match : listOfMatches) {
-			if (match.distance < 310) {
+			if (match.distance < 310) { //310
 				goodMatches.add(match);
 
 			}

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -185,10 +186,13 @@ public class PrincipalWindow extends JFrame {
 		imgChooser.setCurrentDirectory(new File("/res/images"));
 		int response = imgChooser.showOpenDialog(null);
 		if (response == JFileChooser.APPROVE_OPTION) {
-			//return (imgChooser.getSelectedFile().getAbsolutePath())
+			//resize image before display
 			roadImage = new ImageIcon(imgChooser.getSelectedFile().getAbsolutePath());
-			roadImageLabel.setIcon(roadImage);
-			// System.out.print(imgChooser.getSelectedFile().getAbsolutePath());
+			Image img = roadImage.getImage();
+			Image resizedImage = img.getScaledInstance(1000, 700, Image.SCALE_SMOOTH);
+			ImageIcon resizedIcon = new ImageIcon(resizedImage);
+			roadImageLabel.setIcon(resizedIcon);
+			
 			found=MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath());
 			System.out.print(MainTraitementImage.img(imgChooser.getSelectedFile().getAbsolutePath()));
 		this.leftComponent();

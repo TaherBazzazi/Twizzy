@@ -112,13 +112,13 @@ public class LaunchWindow extends JFrame {
 		System.out.println("btn DL pressed");
 	}
 
-	public static void main(String[] args) throws UnsupportedLookAndFeelException {
-		// apply a look
-		UIManager.setLookAndFeel(new NimbusLookAndFeel());
-		// start my window
-		LaunchWindow myLaunchWindow = new LaunchWindow();
-		myLaunchWindow.setVisible(true);
-
-	}
+	/*
+	 * public static void main(String[] args) throws UnsupportedLookAndFeelException
+	 * { // apply a look UIManager.setLookAndFeel(new NimbusLookAndFeel()); // start
+	 * my window LaunchWindow myLaunchWindow = new LaunchWindow();
+	 * myLaunchWindow.setVisible(true);
+	 * 
+	 * }
+	 */
 
 }
